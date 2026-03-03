@@ -7,26 +7,25 @@ import plotly.io as pio
 
 app = Flask(__name__)
 
-# 1. CARGAR EL MODELO
-# Asegúrate de que el archivo .pkl esté en la misma carpeta que este script
+#CARGAR EL MODELO
+#El archivo .pkl debe estar en la misma carpeta para funcionar 
 try:
     modelo = joblib.load('modelo_hipertension.pkl')
     print("Modelo cargado exitosamente.")
 except:
     print("Error: No se encontró el archivo 'modelo_hipertension.pkl'. Entrénalo primero.")
 
-# 2. RUTA PRINCIPAL (HOME)
 @app.route('/')
 def index():
-    # Renderiza tu archivo index.html (que debe heredar de base.html)
+    # Renderiza el archivo index.html 
     return render_template('index.html')
 
-# 3. RUTA PARA RECIBIR DATOS Y PREDECIR
+
 @app.route('/predict', methods=['POST'])
 def predict():
     if request.method == 'POST':
         try:
-            # Capturar datos del formulario (usa los 'name' que pusiste en el HTML)
+            # Capturar datos del formulario (importante utilizar los "name" utilizados en HTML)
             sexo = float(request.form['sexo'])
             edad = float(request.form['edad'])
             peso = float(request.form['edad'])
@@ -35,13 +34,13 @@ def predict():
             estatura_m = estatura / 100
             imc = peso / (estatura_m ** 2)
             
-            # Convertir a formato que el modelo entiende (lista de listas)
+            # Convertir a una lista para mandarlo al modelo
             datos_entrada = np.array([[sexo, edad, peso, estatura, tension_arterial, imc]])
             
-            # Realizar la predicción
+            # Realizar la predicción, recibe los datos de entrada
             prediccion = modelo.predict(datos_entrada)[0]
             
-            # Convertir el resultado numérico en algo amigable
+            # Simplificar el resultado para interpretación
             resultado_texto = "Riesgo Alto" if prediccion == 1 else "Riesgo Bajo"
             
             # Enviar el resultado de vuelta a una página de resultados
@@ -52,11 +51,13 @@ def predict():
         
 
 
+## ESTA VISTA SE DEBE PRESENTAR SOLO PARA EL "ADMINISTRADOR DEL PROYECTO"
 
-
+##SEPARAR EN UN ARCHIVO INDEPENDIENTE
+##VALDIAR QUE TIPOS DE GRAFICOS PRESENTAR
 @app.route('/dashboard')
 def dashboard():
-    # Leer los datos de entrenamiento
+    # Leer los datos
     df = pd.read_csv('datosLimpios.csv')
     
     # Gráfico 1: Distribución de Riesgo (Pastel)
@@ -64,11 +65,11 @@ def dashboard():
         color_discrete_sequence=['#2ecc71', '#e74c3c'])
     
     # Gráfico 2: Relación Presión Sistólica vs Edad
-    fig2 = px.scatter(df, x='edad', y='tension_arterial', color='riesgo_hipertension',
+    fig2 = px.scatter(df, x='edad', y='peso', color='riesgo_hipertension',
         title='Presión Sistólica por Edad',
         labels={'sistolica': 'Presión Alta', 'edad': 'Edad (años)'})
 
-    # Convertir gráficos a HTML (solo el div)
+    # Convertir gráficos a HTML 
     graph1_html = pio.to_html(fig1, full_html=False)
     graph2_html = pio.to_html(fig2, full_html=False)
 

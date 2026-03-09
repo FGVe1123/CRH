@@ -5,6 +5,10 @@ import pandas as pd
 import plotly.express as px
 import plotly.io as pio
 
+
+##TRABAJAR LA CONEXIÓN A LA BASE DE DATOS
+##REVISAR TABLAS, POSIBLEMENTE SE DEBA MODIFICAR PARA EL ALMACENAMIENTO DE LOS DATOS
+##REVISAR LO QUE SE PUSO EN DOCUMENTOS QUE SE VA A ENTREGAR, SE PUEDEN ALMACENAR DATOS "CONFIRMADOS" POR MEDICO O LOS DATOS QUE SE VAYAN GENERANDO CON EL MODELO PERMISO DEL USUARIO
 app = Flask(__name__)
 
 #CARGAR EL MODELO
@@ -20,20 +24,32 @@ def index():
     # Renderiza el archivo index.html 
     return render_template('index.html')
 
+@app.route('/formulario')
+def formulario():
+    return render_template('formulario.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
     if request.method == 'POST':
         try:
             # Capturar datos del formulario (importante utilizar los "name" utilizados en HTML)
-            sexo = float(request.form['sexo'])
-            edad = float(request.form['edad'])
-            peso = float(request.form['edad'])
-            estatura = float(request.form['edad'])
-            tension_arterial = float(request.form['tension_arterial'])
+            sexo = int(request.form.get('sexo'))
+            edad = int(request.form.get('edad'))
+            peso = int(request.form.get('peso'))
+            estatura = int(request.form.get('estatura'))
+            tension_arterial = int(request.form.get('tension_arterial'))
             estatura_m = estatura / 100
             imc = peso / (estatura_m ** 2)
             
+            if not (12 <= edad <= 65):
+                return render_template(index.html, error="La edad debe estar dentro del rango propuesto")
+            if not (29 <= peso <= 200):
+                return render_template(index.html, error="El peso debe estar dentro del rango propuesto")
+            if not (137 <= estatura <= 192):
+                return render_template(index.html, error="La estatura debe estar dentro del rango propuesto")
+            if not (90 <= estatura <= 200):
+                return render_template(index.html, error="La tension arterial debe estar dentro del rango propuesto")
+
             # Convertir a una lista para mandarlo al modelo
             datos_entrada = np.array([[sexo, edad, peso, estatura, tension_arterial, imc]])
             
@@ -45,11 +61,8 @@ def predict():
             
             # Enviar el resultado de vuelta a una página de resultados
             return render_template('resultado.html', prediccion=resultado_texto)
-        
         except Exception as e:
             return f"Hubo un error en el procesamiento: {str(e)}"
-        
-
 
 ## VISTA PARA USUARIO
 ##AGREGAR DATOS DE REFERENCIA PARA COMPARATIVAS, CANTIDAD DE REGISTROS EN EL DATASET

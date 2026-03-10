@@ -4,12 +4,16 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
+import db
+
+
 
 
 ##TRABAJAR LA CONEXIÓN A LA BASE DE DATOS
 ##REVISAR TABLAS, POSIBLEMENTE SE DEBA MODIFICAR PARA EL ALMACENAMIENTO DE LOS DATOS
 ##REVISAR LO QUE SE PUSO EN DOCUMENTOS QUE SE VA A ENTREGAR, SE PUEDEN ALMACENAR DATOS "CONFIRMADOS" POR MEDICO O LOS DATOS QUE SE VAYAN GENERANDO CON EL MODELO PERMISO DEL USUARIO
 app = Flask(__name__)
+
 
 #CARGAR EL MODELO
 #El archivo .pkl debe estar en la misma carpeta para funcionar 
@@ -69,28 +73,35 @@ def predict():
 ##VALDIAR QUE TIPOS DE GRAFICOS PRESENTAR
 @app.route('/dashboard')
 def dashboard():
-    # Leer los datos
-    df = pd.read_csv('datosLimpios.csv')
-    
-    # Gráfico 1: Distribución de Riesgo (Pastel)
-    fig1 = px.pie(df, names='riesgo_hipertension', title='Distribución de Pacientes',
+    try:
+        df = db.leer_datos_db()
+        # Gráfico 1: Distribución de Riesgo (Pastel)
+        fig1 = px.pie(df, names='riesgo_hipertension', title='Distribución de Pacientes',
         color_discrete_sequence=['#2ecc71', '#e74c3c'])
     
-    # Gráfico 2: Relación Presión Sistólica vs Edad
-    fig2 = px.scatter(df, x='edad', y='peso', color='riesgo_hipertension',
-        title='Presión Sistólica por Edad',
-        labels={'sistolica': 'Presión Alta', 'edad': 'Edad (años)'})
+    # Gráfico 2: Relación tension arterial y masa corporal
+        fig2 = px.scatter(df, x='masa_corporal', y='tension_arterial', color='riesgo_hipertension',
+        title='Relacion masa corporal y tension arterial')
 
     # Convertir gráficos a HTML 
-    graph1_html = pio.to_html(fig1, full_html=False)
-    graph2_html = pio.to_html(fig2, full_html=False)
+        graph1_html = pio.to_html(fig1, full_html=False)
+        graph2_html = pio.to_html(fig2, full_html=False)
+    
+        
+        
+        # ENVIAMOS LOS DATOS A LA PLANTILLA
+        return render_template("dashboard.html", status="Conectado",graph1=graph1_html,graph2=graph2_html)
+    
+    except Exception as e:
+        return render_template("dashboard.html", status="Error", error=str(e))
 
-    return render_template('dashboard.html', graph1=graph1_html, graph2=graph2_html)
-
-if __name__ == '__main__':
-    app.run(debug=True)
 
 
 
 ## ESTA VISTA SE DEBE PRESENTAR SOLO PARA EL "ADMINISTRADOR DEL PROYECTO"
 ##VISTA PARA ADMINISTRADOR PENDIENTE
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

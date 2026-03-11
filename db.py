@@ -7,7 +7,7 @@ def leer_datos_db():
 
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
-        query = "SELECT * FROM dataset_hipertension"
+        query = "SELECT * FROM dataset_hipertension" #select de los datos en dataset
         cursor.execute(query)
         columnas = [desc[0] for desc in cursor.description]
         datos = cursor.fetchall()

@@ -18,10 +18,10 @@ app = Flask(__name__)
 #CARGAR EL MODELO
 #El archivo .pkl debe estar en la misma carpeta para funcionar 
 try:
-    modelo = joblib.load('modelo_hipertension.pkl')
+    modelo = joblib.load('modelo_hipertension8020.pkl')
     print("Modelo cargado exitosamente.")
 except:
-    print("Error: No se encontró el archivo 'modelo_hipertension.pkl'. Entrénalo primero.")
+    print("Error: No se encontró el archivo 'modelo_hipertension8020.pkl'. Entrénalo primero.")
 
 @app.route('/')
 def index():

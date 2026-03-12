@@ -3,9 +3,10 @@ import joblib
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import plotly.figure_factory as ff
 import plotly.io as pio
+from sklearn.metrics import confusion_matrix, f1_score
 import db
-
 
 
 
@@ -15,13 +16,33 @@ import db
 app = Flask(__name__)
 
 
+        
 #CARGAR EL MODELO
 #El archivo .pkl debe estar en la misma carpeta para funcionar 
 try:
     modelo = joblib.load('modelo_hipertension8020.pkl')
-    print("Modelo cargado exitosamente.")
+    df_datos_prueba = pd.read_csv('datos_prueba.csv')
+    print("Modelo y csv cargados exitosamente.")
+
 except:
-    print("Error: No se encontró el archivo 'modelo_hipertension8020.pkl'. Entrénalo primero.")
+    print("Error: No se encuantra uno o variso archivos.")
+
+f1_var_global =0
+matriz_var_global = " "
+#Metricas de evaluación del modelo (PASAR A VISTA ADMINISTRADOR DESPUES)
+X_test = df_datos_prueba.drop('riesgo_hipertension', axis=1)
+y_test = df_datos_prueba['riesgo_hipertension']
+y_prediccion = modelo.predict(X_test)
+f1_global = round(f1_score(y_test, y_prediccion, average='weighted'), 2)
+    
+# Generar el gráfico de la matriz
+fig = ff.create_annotated_heatmap(z=confusion_matrix(y_test, y_prediccion), 
+                                     x=['Normal', 'Riesgo'], 
+                                     y=['Normal', 'Riesgo'], 
+                                     colorscale='Blues')
+matriz = pio.to_html(fig, full_html=False)
+fig.show()
+print("Métricas calculadas con éxito.")
 
 @app.route('/')
 def index():
@@ -85,13 +106,10 @@ def dashboard():
 
     # Convertir gráficos a HTML 
         graph1_html = pio.to_html(fig1, full_html=False)
-        graph2_html = pio.to_html(fig2, full_html=False)
-    
-        
+        graph2_html = pio.to_html(fig2, full_html=False)    
         
         # ENVIAMOS LOS DATOS A LA PLANTILLA
-        return render_template("dashboard.html", status="Conectado",graph1=graph1_html,graph2=graph2_html)
-    
+        return render_template("dashboard.html", status="Conectado",graph1=graph1_html,graph2=graph2_html, f1_score=f1_global,matriz_html=matriz)
     except Exception as e:
         return render_template("dashboard.html", status="Error", error=str(e))
 

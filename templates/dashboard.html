@@ -22,11 +22,29 @@
         </div>
     </div>
 
+    
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    {{ matriz_html | safe }} <!--SE AGREGA EL GRÁFICO-->
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="text-center mt-3">
         <a href="/formulario" class="btn btn-primary">Volver al Formulario</a>
     </div>
 </div>
 
+<div class="col-md-4">
+    <div class="card text-white bg-info mb-3">
+        <div class="card-body text-center">
+                    <h5 class="card-title">F1-Score (Precisión Global)</h5>
+                    <p class="display-4">{{ f1_score if f1_score else "sin datos"}}</p>
+                    <small>Cercano a 1.0 es ideal</small>
+        </div>
+    </div>
+</div>
 
 <div class="container mt-5">
     <div class="card p-4 shadow-sm border-0">

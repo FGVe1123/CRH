@@ -26,7 +26,11 @@
         <div class="col-md-8">
             <div class="card shadow">
                 <div class="card-body">
+                    {% if matriz_html %}
                     {{ matriz_html | safe }} <!--SE AGREGA EL GRÁFICO-->
+                    {% else %}
+                    <p class="text-danger">Error: El gráfico de la matriz no se generó.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>

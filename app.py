@@ -7,6 +7,12 @@ import plotly.figure_factory as ff
 import plotly.io as pio
 from sklearn.metrics import confusion_matrix, f1_score
 import db
+from supabase import create_client
+
+SUPABASE_URL = "https://rijyeympgerxlwvyemwe.supabase.co"
+SUPABASE_KEY = "sb_publishable_4Ap1ApV_qdeWhRqWYlJJSQ_43uTu55X"
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 

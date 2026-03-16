@@ -1,6 +1,7 @@
 import psycopg2
 import pandas as pd
 
+
 def leer_datos_db():
     try:
         DATABASE_URL = "postgresql://postgres:PASSWORD@db.rijyeympgerxlwvyemwe.supabase.co:5432/postgres"

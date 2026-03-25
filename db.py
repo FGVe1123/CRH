@@ -4,7 +4,7 @@ import pandas as pd
 
 def leer_datos_db():
     try:
-        DATABASE_URL = "postgresql://postgres:PASSWORD@db.rijyeympgerxlwvyemwe.supabase.co:5432/postgres"
+        DATABASE_URL = "postgresql://postgres:password@db.rijyeympgerxlwvyemwe.supabase.co:5432/postgres"
 
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()

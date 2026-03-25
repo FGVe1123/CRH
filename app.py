@@ -6,15 +6,14 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.io as pio
 from sklearn.metrics import confusion_matrix, f1_score
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
 import db
 from supabase import create_client
 
 SUPABASE_URL = "https://rijyeympgerxlwvyemwe.supabase.co"
 SUPABASE_KEY = "sb_publishable_4Ap1ApV_qdeWhRqWYlJJSQ_43uTu55X"
-
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-
 
 ##TRABAJAR LA CONEXIÓN A LA BASE DE DATOS
 ##REVISAR TABLAS, POSIBLEMENTE SE DEBA MODIFICAR PARA EL ALMACENAMIENTO DE LOS DATOS
@@ -26,16 +25,42 @@ app = Flask(__name__)
 #CARGAR EL MODELO
 #El archivo .pkl debe estar en la misma carpeta para funcionar 
 try:
+    
     modelo = joblib.load('modelo_hipertension8020.pkl')
-    df_datos_prueba = pd.read_csv('datos_prueba.csv')
-    print("Modelo y csv cargados exitosamente.")
-    X_test = df_datos_prueba.drop('riesgo_hipertension', axis=1)
-    y_test = df_datos_prueba['riesgo_hipertension']
-    y_prediccion = modelo.predict(X_test)
-    f1_global = round(f1_score(y_test, y_prediccion, average='weighted'), 2)
-# Generar el gráfico de la matriz
-    matriz = confusion_matrix(y_test, y_prediccion)
 
+    dataset = pd.read_csv('datosLimpios.csv')
+    df = pd.DataFrame(dataset) #generar el dataframe para su manipulacion
+
+    df = df.sample(frac=1).reset_index(drop=True)
+
+    X = df.drop(columns=['riesgo_hipertension'])
+    y = df['riesgo_hipertension'] #variable objetivo
+    #Dividir el conjunto de prueba (20% del total de los datos)
+    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    #Almacenar datos de prueba
+    df_datos_Prueba = pd.DataFrame(x_test)
+    df_datos_Prueba['riesgo_hipertension'] = y_test
+    df_datos_Prueba.to_csv('datos_prueba.csv', index=False)
+    df.drop(df_datos_Prueba.index, inplace=True)
+    df.to_csv('datos_entrenamiento.csv', index=False)
+
+    #uso del modelo
+    model = DecisionTreeClassifier()
+    model.fit(x_train, y_train)
+
+    #evaluar el modelo
+    y_pred = model.predict(x_test)
+
+    f1_global = f1_score(y_test, y_pred)
+    print("F1 Score:", f1_score)
+
+    matriz = confusion_matrix(y_test, y_pred)
+    print("Matriz de confusión:")
+    print(confusion_matrix)
+    modelo_final = DecisionTreeClassifier(random_state=42)
+    modelo_final.fit(x_train, y_train)
+    joblib.dump(modelo_final, 'modelo_hipertension8020.pkl')
+    print("Modelo exportado exitosamente como 'modelo_hipertension.pkl'")
 except:
     print("Error: No se encuantra uno o variso archivos.")
 
@@ -98,8 +123,8 @@ def dashboard():
                         text_auto=True, 
                         aspect="auto", 
                         labels=dict(x="Predicción", y="Real", color="Cantidad"),
-                        x=['Normal', 'Riesgo'], 
-                        y=['Normal', 'Riesgo'],
+                        x=['Bajo', 'Alto'], 
+                        y=['Bajo', 'Alto'],
                         color_continuous_scale='Blues')
         
     fig.update_layout(title="Matriz de Confusión Actualizada")

@@ -3,9 +3,9 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6 text-center card shadow p-5">
-        <h3>Resultado del Diagnóstico:</h3>
+        <h3>Resultado del diagnóstico:</h3>
         
-        <div class="display-4 my-4 {% if prediccion == 'Riesgo Alto' %}text-danger{% else %}text-success{% endif %}">
+        <div class="display-4 my-4 {% if prediccion == '¡RIESGO ALTO!' %}text-danger{% else %}text-success{% endif %}">
             {{ prediccion }}
         </div>
         
@@ -20,11 +20,11 @@
 
     <a href="mailto:?subject=Resultado%20Médico&body=Hola,%20mi%20resultado%20de%20evaluación%20es:%20{{ prediccion }}" 
        class="btn btn-secondary">
-       Enviar por Correo
+       Enviar por correo
     </a>
 </div>
 
-        <p class="text-muted">Este es un modelo educativo basado en Árboles de Decisión. Consulte siempre a un profesional.</p>
+        <p class="text-muted"><br>Este es un modelo educativo basado en Árboles de Decisión. Consulte siempre a un profesional.</p>
         
         <a href="/formulario" class="btn btn-outline-secondary mt-3">Volver a intentar</a>
     </div>

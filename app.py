@@ -59,8 +59,8 @@ try:
     print(confusion_matrix)
     modelo_final = DecisionTreeClassifier(random_state=42)
     modelo_final.fit(x_train, y_train)
-    joblib.dump(modelo_final, 'modelo_hipertension8020.pkl')
-    print("Modelo exportado exitosamente como 'modelo_hipertension.pkl'")
+    #joblib.dump(modelo_final, 'modelo_hipertension8020.pkl')
+    #print("Modelo exportado exitosamente como 'modelo_hipertension.pkl'")
 except:
     print("Error: No se encuantra uno o variso archivos.")
 
@@ -88,6 +88,7 @@ def predict():
             peso = int(request.form.get('peso'))
             estatura = int(request.form.get('estatura'))
             tension_arterial = int(request.form.get('tension_arterial'))
+            diastolica = int(request.form.get('diastolica'))
             estatura_m = estatura / 100
             imc = peso / (estatura_m ** 2)
             
@@ -97,17 +98,19 @@ def predict():
                 return render_template(index.html, error="El peso debe estar dentro del rango propuesto")
             if not (137 <= estatura <= 192):
                 return render_template(index.html, error="La estatura debe estar dentro del rango propuesto")
-            if not (90 <= estatura <= 200):
-                return render_template(index.html, error="La tension arterial debe estar dentro del rango propuesto")
+            if not (90 <= tension_arterial <= 200):
+                return render_template(index.html, error="La tension arterial (sistólica) debe estar dentro del rango propuesto")
+            if not (60 <= diastolica <= 120):
+                return render_template(index.html, error="La tension arterial (diástolica) debe estar dentro del rango propuesto")
 
             # Convertir a una lista para mandarlo al modelo
-            datos_entrada = np.array([[sexo, edad, peso, estatura, tension_arterial, imc]])
+            datos_entrada = np.array([[sexo, edad, peso, estatura, tension_arterial, diastolica, imc]])
             
             # Realizar la predicción, recibe los datos de entrada
             prediccion = modelo.predict(datos_entrada)[0]
             
             # Simplificar el resultado para interpretación
-            resultado_texto = "Riesgo Alto" if prediccion == 1 else "Riesgo Bajo"
+            resultado_texto = "¡RIESGO ALTO!" if prediccion == 1 else "Riesgo bajo"
             
             # Enviar el resultado de vuelta a una página de resultados
             return render_template('resultado.html', prediccion=resultado_texto)
@@ -127,7 +130,7 @@ def dashboard():
                         y=['Bajo', 'Alto'],
                         color_continuous_scale='Blues')
         
-    fig.update_layout(title="Matriz de Confusión Actualizada")
+    fig.update_layout(title="Matriz de confusión")
     matriz_var_global = pio.to_html(fig, full_html=False,include_plotlyjs='cdn') 
 
     try:

@@ -135,13 +135,14 @@ def dashboard():
 
     try:
         df = db.leer_datos_db()
+        df_jovenes = df[df['edad'].between(20, 30, inclusive='both')]
         # Gráfico 1: Distribución de Riesgo (Pastel)
         fig1 = px.pie(df, names='riesgo_hipertension', title='Distribución de Pacientes',
         color_discrete_sequence=['#2ecc71', '#e74c3c'])
     
     # Gráfico 2: Relación tension arterial y masa corporal
-        fig2 = px.scatter(df, x='masa_corporal', y='tension_arterial', color='riesgo_hipertension',
-        title='Relacion masa corporal y tension arterial')
+        fig2 = px.box(df_jovenes, x='riesgo_hipertension', y='edad', color='riesgo_hipertension',
+        title='Relacion edades y tension arterial')
 
     # Convertir gráficos a HTML 
         graph1_html = pio.to_html(fig1, full_html=False)

@@ -91,6 +91,7 @@ def predict():
             diastolica = int(request.form.get('diastolica'))
             estatura_m = estatura / 100
             imc = peso / (estatura_m ** 2)
+            almacenar_datos = int(request.form.get('almacenar'))
             
             if not (12 <= edad <= 65):
                 return render_template(index.html, error="La edad debe estar dentro del rango propuesto")
@@ -112,6 +113,14 @@ def predict():
             # Simplificar el resultado para interpretación
             resultado_texto = "¡RIESGO ALTO!" if prediccion == 1 else "Riesgo bajo"
             
+            #insertar datos a la BD
+            if almacenar_datos == 1:
+                datos_sql = [int(sexo), int(edad), float(peso), float(estatura),float(imc), int(tension_arterial), bool(prediccion), int(diastolica)]
+                db.insertar_datos(datos_sql)
+            else:
+                print("No se almacenó el registro")
+        
+
             # Enviar el resultado de vuelta a una página de resultados
             return render_template('resultado.html', prediccion=resultado_texto)
         except Exception as e:

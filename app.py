@@ -84,11 +84,11 @@ def predict():
         try:
             # Capturar datos del formulario (importante utilizar los "name" utilizados en HTML)
             sexo = int(request.form.get('sexo'))
-            edad = int(request.form.get('edad'))
-            peso = int(request.form.get('peso'))
-            estatura = int(request.form.get('estatura'))
-            tension_arterial = int(request.form.get('tension_arterial'))
-            diastolica = int(request.form.get('diastolica'))
+            edad = float(request.form.get('edad'))
+            peso = float(request.form.get('peso'))
+            estatura = float(request.form.get('estatura'))
+            tension_arterial = float(request.form.get('tension_arterial'))
+            diastolica = float(request.form.get('diastolica'))
             estatura_m = estatura / 100
             imc = peso / (estatura_m ** 2)
             almacenar_datos = int(request.form.get('almacenar'))

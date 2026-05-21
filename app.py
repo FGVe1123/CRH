@@ -104,7 +104,7 @@ def predict():
             if not (60 <= diastolica <= 120):
                 return render_template(index.html, error="La tension arterial (diástolica) debe estar dentro del rango propuesto")
 
-            # Convertir a una lista para mandarlo al modelo
+            # Convertir a una df para mandarlo al modelo
             datos_entrada = pd.DataFrame([[sexo, edad, peso, estatura, tension_arterial, imc, diastolica]])
             
             # Realizar la predicción, recibe los datos de entrada

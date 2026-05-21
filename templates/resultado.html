@@ -5,24 +5,43 @@
     <div class="col-md-6 text-center card shadow p-5">
         <h3>Resultado del diagnóstico:</h3>
         
-        <div class="display-4 my-4 {% if prediccion == '¡RIESGO ALTO!' %}text-danger{% else %}text-success{% endif %}">
-            {{ prediccion }}
-        </div>
+        <div class="card my-4 shadow-sm">
+    <div class="card-header {% if prediccion == '¡RIESGO ALTO!' %}bg-danger text-white{% else %}bg-success text-white{% endif %}">  <h4 class="mb-0">{{ prediccion }}</h4>
+        <h4 class="mb-0">Recomendaciones para tu salud</h4>
+    </div>
+    <div class="card-body">
+        {% if prediccion == '¡RIESGO ALTO!' %}
+            <p class="card-text text-muted">Nuestro sistema de árboles de decisión ha detectado múltiples factores de riesgo elevados en tus datos físicos.</p>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Consulta Médica:</strong> Te recomendamos agendar una consulta con tu médico para una valoración completa.</li>
+                <li class="list-group-item"><strong>Monitoreo:</strong> Registra tu presión arterial sistólica y diastólica dos veces al día (mañana y noche) durante una semana para compartirlos con tu médico.</li>
+            <div class="alert alert-warning mt-3 mb-0" role="alert">
+                <strong>Nota importante:</strong> Recuerda que esta herramienta es educativa y no sustituye un diagnóstico médico.
+            </div>
+        {% else %}
+            <p class="card-text text-muted">Tus datos físicos actuales se encuentran dentro de los parámetros estables analizados por el modelo.</p>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"> Continúa con hábitos alimenticios saludables y realiza actividad física diaria.</li>
+                <li class="list-group-item"><strong>Prevención:</strong> Mantén un control periódico y mídete tu presión arterial de forma preventiva.</li>
+            </ul>
+        {% endif %}
+    </div>
+        
         
         <div class="mt-4">
-    <p>Compartir resultado:</p>
+            <p>Compartir resultado:</p>
     
     
-    <a href="https://wa.me/?text=Mi%20resultado%20de%20riesgo%20de%20hipertensi%C3%B3n%20es:%20{{ prediccion }}" 
-       class="btn btn-success" target="_blank">
-       Compartir por WhatsApp
-    </a>
+            <a href="https://wa.me/?text=Mi%20resultado%20de%20riesgo%20de%20hipertensi%C3%B3n%20es:%20{{ prediccion }}" 
+            class="btn btn-success" target="_blank">
+            Compartir por WhatsApp
+            </a>
 
-    <a href="mailto:?subject=Resultado%20Médico&body=Hola,%20mi%20resultado%20de%20evaluación%20es:%20{{ prediccion }}" 
-       class="btn btn-secondary">
-       Enviar por correo
-    </a>
-</div>
+            <a href="mailto:?subject=Resultado%20Médico&body=Hola,%20mi%20resultado%20de%20evaluación%20es:%20{{ prediccion }}" 
+            class="btn btn-secondary">
+            Enviar por correo
+            </a>
+        </div>
 
         <p class="text-muted"><br>Este es un modelo educativo basado en Árboles de Decisión. Consulte siempre a un profesional.</p>
         

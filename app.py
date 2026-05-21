@@ -105,7 +105,7 @@ def predict():
                 return render_template(index.html, error="La tension arterial (diástolica) debe estar dentro del rango propuesto")
 
             # Convertir a una lista para mandarlo al modelo
-            datos_entrada = np.array([[sexo, edad, peso, estatura, tension_arterial, diastolica, imc]])
+            datos_entrada = pd.DataFrame([[sexo, edad, peso, estatura, tension_arterial, imc, diastolica]])
             
             # Realizar la predicción, recibe los datos de entrada
             prediccion = modelo.predict(datos_entrada)[0]
